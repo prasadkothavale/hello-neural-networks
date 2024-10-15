@@ -1,7 +1,7 @@
 # hello-neural-networks
 Repository to keep notebooks from Deep Learning A-Z 2024 course
 
-## Setup
+## Setup with Anaconda
 ### Install Anaconda (Debian)
 Refer: https://docs.anaconda.com/anaconda/install/linux/
 1. Install dependent libraries
@@ -39,16 +39,97 @@ conda activate tf-gpu
 ### Install dependent packages in Anaconda
 _(tdqm is optional)_
 ```sh
-pip install pandas matplotlib scikit-learn scipy tdqm
+pip install pandas matplotlib scikit-learn scipy tdqm keras
 conda install -c conda-forge jupyterlab
 ```
 
-## Run
+## Setup without Anaconda
+### Install tenserflow (https://www.tensorflow.org/install/pip)
+
+1. Verify gpu (or skip for cpu only)
+   ```sh
+   nvidia-smi
+   ```
+
+2. Create a virtual environment with venv
+   ```sh
+   python3 -m venv tf-gpu
+   source tf-gpu/bin/activate
+   ```
+
+3. Install tensorflow (gpu)
+   ```sh
+   pip install --upgrade pip
+   pip install tensorflow[and-cuda]
+   ```
+   or install tensorflow (cpu only)
+   ```sh
+   pip install tensorflow
+   ```
+
+4. Verify the installation
+   - [cpu]
+      ```sh
+      python3 -c "import tensorflow as tf; print(tf.reduce_sum(tf.random.normal([1000, 1000])))"
+      ```
+   - [gpu]
+      ```sh
+      python3 -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
+      ```
+
+5.  [GPU only] Virtual environment configuration
+      
+      Create symbolic links to NVIDIA shared libraries:
+      ```sh
+      pushd $(dirname $(python -c 'print(__import__("tensorflow").__file__)'))
+      ln -svf ../nvidia/*/lib/*.so* .
+      popd
+      ```
+
+      Create a symbolic link to ptxas:
+      ```sh
+      ln -sf $(find $(dirname $(dirname $(python -c "import nvidia.cuda_nvcc;         
+      print(nvidia.cuda_nvcc.__file__)"))/*/bin/) -name ptxas -print -quit) $VIRTUAL_ENV/bin/ptxas
+      ```
+
+      Verify the GPU setup:
+      ```sh
+      python3 -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
+      ```
+
+### Install dependencies
+```sh
+pip install pandas matplotlib scikit-learn scipy tdqm keras
+```
+Either install Jupyter Lab or just Jupyter Notebook as per the requirement
+```sh
+pip install jupyterlab
+```
+or
+```sh
+pip install notebook
+```
+
+## Run with Anaconda
 ### Activate Anaconda Tenserflow environment
 ```sh
 conda activate tf-gpu
 ```
-### Start Jupyter
+### Start Jupyter Lab
+```sh
+jupyter lab
+```
+---
+## Run without Anaconda
+### Activate Tenserflow environment
+```sh
+source tf-gpu/bin/activate
+```
+### Start Jupyter Lab
+```sh
+jupyter lab
+```
+or
 ```sh
 jupyter notebook
 ```
